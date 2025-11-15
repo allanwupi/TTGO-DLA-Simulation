@@ -35,7 +35,7 @@ TFT_eSPI tft = TFT_eSPI();
 int grid[ROWS][COLS] = {0};
 
 void spawn(Walker *ptr, int radius);
-bool invalid(int x, int y);
+bool outOfBounds(int x, int y);
 int walk(int grid[][COLS], Walker *ptr);
 int stick(int grid[][COLS], Walker *ptr);
 uint32_t colourMap(int state);
@@ -72,6 +72,7 @@ void loop() {
     if (num_particles % 10 == 0) {
       radius += 1;
     }
+    if (radius > 80) radius = 80; // temporary cap
     respawn = true;
     force_refresh = true;
   }
@@ -89,7 +90,7 @@ void loop() {
   }
 }
 
-bool invalid(int x, int y) {
+bool outOfBounds(int x, int y) {
   return (x < 0 || x >= COLS || y < 0 || y >= ROWS);
 }
 
@@ -102,7 +103,7 @@ void spawn(Walker *ptr, int radius) {
   ptr->y = y + CENTRE_Y;
   // Serial.printf("spawned @ x=%d, y=%d\n",ptr->x,ptr->y);
   ptr->s = FULL;
-  if (!invalid(ptr->x, ptr->y)) {
+  if (!outOfBounds(ptr->x, ptr->y)) {
     grid[ptr->y][ptr->x] = FULL;
   } else {
     // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
@@ -118,7 +119,7 @@ int walk(int grid[][COLS], Walker *ptr) {
   grid[ptr->y][ptr->x] = EMPTY;
   ptr->x += VECTOR_X[direction];
   ptr->y += VECTOR_Y[direction];
-  if (invalid(ptr->x, ptr->y)) {
+  if (outOfBounds(ptr->x, ptr->y)) {
     return 1;
   } else {
     grid[ptr->y][ptr->x] = FULL;
@@ -134,7 +135,7 @@ int stick(int grid[][COLS], Walker *ptr) {
   for (int i = 0; i < NUM_WALK_DIRECTIONS; i++) {
     nx = ptr->x + VECTOR_X[i];
     ny = ptr->y + VECTOR_Y[i];
-    if (invalid(nx, ny)) {
+    if (outOfBounds(nx, ny)) {
       continue;
     }
     if (grid[ny][nx] != EMPTY) {
