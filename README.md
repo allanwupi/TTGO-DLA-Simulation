@@ -1,7 +1,7 @@
 Diffusion-limited aggregation (DLA) simulation
 ===
 
-Simulate randomly walking particles and growth of Brownian trees using the LILYGO T-Display S3.
+Simulate randomly walking particles and growth of Brownian trees on the T-Display S3.
 
 Initially inspired by [this Youtube video](https://www.youtube.com/watch?v=gsJHzBTPG0Y) about procedural mountain generation. See the [Wikipedia article on DLA](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation) for more details.
 
