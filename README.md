@@ -16,7 +16,9 @@ Current Implementation
 Limitations and Planned Features
 ---
 
-The current simulation is very, _very_ slow. Also, it could look a bit prettier.
+The current simulation is _very_ slow. Also, it could look a lot prettier.
+
+For ideas, refer to the graphics on [this page about cellular automata.](https://robotmoon.com/cellular-automata/#elementary-cellular-automata)
 
 1. Implement a better algorithm for spawn positions as a function of tree size
 2. Add alternative seed configurations, e.g. straight line at the bottom
