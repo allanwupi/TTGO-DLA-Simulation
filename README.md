@@ -3,7 +3,7 @@ Diffusion-limited aggregation (DLA) simulation
 
 Simulate randomly walking particles and growth of Brownian trees using the LILYGO T-Display S3.
 
-Inspired by [this Youtube video](https://www.youtube.com/watch?v=gsJHzBTPG0Y). See the [Wikipedia article](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation) for more details.
+Initially inspired by [this Youtube video](https://www.youtube.com/watch?v=gsJHzBTPG0Y) about procedural mountain generation. See the [Wikipedia article on DLA](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation) for more details.
 
 Current Implementation
 ---
@@ -18,7 +18,7 @@ Limitations and Planned Features
 
 The current simulation is _very_ slow. Also, it could look a lot prettier.
 
-For ideas, refer to the graphics on [this page about cellular automata.](https://robotmoon.com/cellular-automata/#elementary-cellular-automata)
+There are some excellent animations on [this page about cellular automata](https://robotmoon.com/cellular-automata/#elementary-cellular-automata).
 
 1. Implement a better algorithm for spawn positions as a function of tree size
 2. Add alternative seed configurations, e.g. straight line at the bottom
