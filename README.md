@@ -20,7 +20,7 @@ The current simulation is very, _very_ slow. Also, it could look a bit prettier.
 
 1. Implement a better algorithm for spawn positions as a function of tree size
 2. Add alternative seed configurations, e.g. straight line at the bottom
-3. Add a 'gravity' force that attracts particles towards the centre
+3. Add a 'gravity' force that attracts particles towards the centre of mass
 4. Support multiple particles moving about simultaneously
 5. Draw decaying trails to show the Brownian motion of the particles
 6. Make a colour palette for particles based on simulation time
