@@ -3,7 +3,7 @@
 #include <math.h>
 #include <limits.h>
 
-#define MAX_PARTICLE_NUM 100
+// #define PARTICLE_NUM 5
 #define COLS 320
 #define ROWS 170
 #define CENTRE_X 160
@@ -138,8 +138,6 @@ int stick(int grid[][COLS], Walker *ptr) {
       continue;
     }
     if (grid[ny][nx] != EMPTY) {
-      ptr->s = FULL;
-      grid[ptr->y][ptr->x] == FULL;
       return 1;
     }
   }
