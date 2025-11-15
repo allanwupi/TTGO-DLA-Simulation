@@ -1,9 +1,9 @@
-Diffusion-limited aggregation
+Diffusion-limited aggregation (DLA) simulation
 ===
 
-A simple program to simulate diffusion-limited aggregation and generate Brownian trees for the LILYGO T-Display S3.
+Simulate randomly walking particles and growth of Brownian trees using the LILYGO T-Display S3.
 
-See the information at [rosettacode](https://rosettacode.org/wiki/Brownian_tree) and [Wikipedia](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation).
+See the information [rosettacode](https://rosettacode.org/wiki/Brownian_tree) and [Wikipedia](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation).
 
 Current implementation
 ---
