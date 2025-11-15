@@ -24,4 +24,4 @@ The current simulation is very, _very_ slow. Also, it could look a bit prettier.
 4. Support multiple particles moving about simultaneously
 5. Draw decaying trails to show the Brownian motion of the particles
 6. Make a colour palette for particles based on simulation time
-7. Rescale screen dynamically as the size of the tree increases
+
