@@ -14,7 +14,8 @@
 #define ERROR_FLAG -1
 
 typedef enum {
-  SEED = 2,
+  SEED = 3,
+  NEW = 2,
   FULL = 1,
   EMPTY = 0,
   OUT_OF_BOUNDS = -1,
@@ -121,13 +122,13 @@ void spawn(Walker *ptr, int radius) {
   }
   ptr->x = x;
   ptr->y = y;
-  ptr->s = FULL;
+  ptr->s = NEW;
   Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
-  if (!outOfBounds(x, y) && (grid[y][x] != OUT_OF_BOUNDS)) {
-    grid[ptr->y][ptr->x] = FULL;
-  } else {
+  if (outOfBounds(x, y) || grid[y][x] == OUT_OF_BOUNDS) {
     // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
     spawn(ptr, radius);
+  } else {
+    grid[ptr->y][ptr->x] = NEW;
   }
 }
 
@@ -136,13 +137,11 @@ void spawn(Walker *ptr, int radius) {
 int walk(int grid[][COLS], Walker *ptr) {
   if (ptr == NULL) return ERROR_FLAG;
   int direction = random(0, NUM_WALK_DIRECTIONS);
-  grid[ptr->y][ptr->x] = EMPTY;
   ptr->x += VECTOR_X[direction];
   ptr->y += VECTOR_Y[direction];
   if (outOfBounds(ptr->x, ptr->y)) {
     return 1;
   } else {
-    grid[ptr->y][ptr->x] = FULL;
     return 0;
   }
 }
@@ -158,7 +157,8 @@ int stick(int grid[][COLS], Walker *ptr) {
     if (outOfBounds(nx, ny)) {
       continue;
     }
-    if (grid[ny][nx] != EMPTY) {
+    if (grid[ny][nx] == SEED || grid[ny][nx] == FULL) {
+      grid[ptr->y][ptr->x] = FULL;
       return 1;
     }
   }
@@ -167,8 +167,9 @@ int stick(int grid[][COLS], Walker *ptr) {
 
 uint32_t colourMap(int state) {
   switch (state) {
+    case NEW: return TFT_GREEN;
+    case SEED:
     case FULL: return TFT_WHITE;
-    case SEED: return TFT_GREEN;
     case EMPTY: return TFT_BLACK;
     default:
       int val = (state > 31) ? 31 : state;
@@ -184,6 +185,7 @@ void drawGrid(int grid[][COLS]) {
       if (grid[y][x] == OUT_OF_BOUNDS) continue;
       cell_colour = colourMap(grid[y][x]);
       tft.drawPixel(x, y, cell_colour);
+      if (grid[y][x] == NEW) grid[y][x] = EMPTY;
     }
   }
 }
