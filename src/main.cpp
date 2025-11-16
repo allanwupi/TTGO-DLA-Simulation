@@ -46,8 +46,7 @@ void loop() {
     GLOBAL_PARTICLE_COUNT++;
     if (radius < MAX_SPAWN_RADIUS && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
       if (GLOBAL_PARTICLE_COUNT < 200) radius++;
-      if (GLOBAL_PARTICLE_COUNT == 200) growth_bar = 20;
-      if (GLOBAL_PARTICLE_COUNT == 400) growth_bar = 40;
+      if (GLOBAL_PARTICLE_COUNT == 200) growth_bar = 25;
       radius++;
     }
     respawn = true;

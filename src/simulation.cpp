@@ -22,10 +22,8 @@ void spawn(int grid[][COLS], Walker *ptr, int radius) {
     x = radius * cos(angle) + CENTRE_X;
     y = radius * sin(angle) + CENTRE_Y;
   } else {
-    while (pow(x-CENTRE_X,2) + pow(y-CENTRE_Y,2) < MAX_SPAWN_RADIUS * MAX_SPAWN_RADIUS) {
-      x = random(0,320+1);
-      y = random(0,170+1);
-    }
+    x = random(0,320+1);
+    y = random(0,170+1);
   }
   ptr->x = x;
   ptr->y = y;
