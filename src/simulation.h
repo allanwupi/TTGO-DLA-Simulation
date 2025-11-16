@@ -24,7 +24,7 @@ typedef enum {
 typedef struct {
   int x;
   int y;
-  State s;
+  // State s;
 } Walker;
 
 /*int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 0, -1, 0};
