@@ -45,14 +45,22 @@ void drawGrid(int grid[][COLS]);
 void setup() {
   int DEFAULT_ROTATION = 3;
   int RANDOM_SEED_PIN = 1;
-  // Serial.begin(115200);
+  Serial.begin(115200);
 
   tft.init();
   tft.setRotation(DEFAULT_ROTATION);
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  tft.setTextFont(0);
   tft.setTextSize(1);
   randomSeed(analogRead(RANDOM_SEED_PIN));
+
+  for (int x = 0; x < 30; x++) {
+    for (int y = 0; y < 9; y++) {
+      grid[y][x] = OUT_OF_BOUNDS;
+      // tft.drawPixel(x, y, TFT_GREEN);
+    }
+  }
 }
 
 void loop() {
@@ -60,6 +68,7 @@ void loop() {
   static unsigned long prevUpdate = millis();
   static int num_particles = 0;
   static int radius = 3;
+  static int growth_bar = 10;
   static bool respawn = false;
   static bool force_refresh = false;
   // MAIN PROGRAM LOOP
@@ -69,8 +78,9 @@ void loop() {
   }
   if (stick(grid, &p) == 1) {
     num_particles++;
-    if (radius < 100 && num_particles % 10 == 0) {
+    if (radius < 100 && num_particles % growth_bar == 0) {
       if (num_particles < 100) radius++;
+      if (num_particles == 100) growth_bar = 20;
       radius++;
     }
     respawn = true;
@@ -87,7 +97,7 @@ void loop() {
     force_refresh = false;
     prevUpdate = millis();
     tft.setCursor(0,0);
-    tft.printf("%d   ", num_particles);
+    tft.printf("%-5d", num_particles);
     delay(SLEEP_MILLIS);
   }
 }
@@ -98,24 +108,22 @@ bool outOfBounds(int x, int y) {
 
 void spawn(Walker *ptr, int radius) {
   if (ptr == NULL) return;
+  int x = 0, y = 0;
   if (radius < 100) {
     float angle = (float)random(0, 360) * M_PI / 180.0;
-    int x = radius * cos(angle);
-    int y = radius * sin(angle);
-    ptr->x = x + CENTRE_X;
-    ptr->y = y + CENTRE_Y;
+    x = radius * cos(angle) + CENTRE_X;
+    y = radius * sin(angle) + CENTRE_Y;
   } else {
-    int x = 0, y = 0;
     while (x*x + y*y < 10000) {
       x = random(0,320+1);
       y = random(0,170+1);
     }
-    ptr->x = x;
-    ptr->y = y;
   }
-  // Serial.printf("spawned @ x=%d, y=%d\n",ptr->x,ptr->y);
+  ptr->x = x;
+  ptr->y = y;
   ptr->s = FULL;
-  if (!outOfBounds(ptr->x, ptr->y)) {
+  Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
+  if (!outOfBounds(x, y) && (grid[y][x] != OUT_OF_BOUNDS)) {
     grid[ptr->y][ptr->x] = FULL;
   } else {
     // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
