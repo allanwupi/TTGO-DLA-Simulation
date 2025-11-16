@@ -100,9 +100,7 @@ void loop() {
   if (stick(grid, &p) == 1) {
     GLOBAL_PARTICLE_COUNT++;
     if (radius < 100 && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
-      if (GLOBAL_PARTICLE_COUNT < 100) radius++;
-      if (GLOBAL_PARTICLE_COUNT == 250) growth_bar = 25;
-      if (GLOBAL_PARTICLE_COUNT == 500) growth_bar = 50;
+      growth_bar = (1 + GLOBAL_PARTICLE_COUNT / 100) * 20;
       radius++;
     }
     respawn = true;
