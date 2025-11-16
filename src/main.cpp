@@ -2,28 +2,29 @@
 #include <TFT_eSPI.h>
 #include <math.h>
 
-// #define PARTICLE_NUM 5
+#define PARTICLE_NUM 5
 #define COLS 320
 #define ROWS 170
 #define CENTRE_X 160
 #define CENTRE_Y 85
-// Moore neighbourhood
-#define NUM_WALK_DIRECTIONS 8
+#define NUM_WALK_DIRECTIONS 8 // Moore
 #define SLEEP_MILLIS 100
 #define ERROR_FLAG -1
 
+// Colours
+uint32_t TEXT_COLOR = TFT_CYAN;
 uint32_t BG_COLOR = TFT_BLACK;
-uint32_t TEXT_COLOR = TFT_WHITE;
-uint32_t NEW_COLOR = TFT_WHITE;
+uint32_t NEW_COLOR = TFT_CYAN;
 uint32_t SEED_COLOR = TFT_WHITE;
 uint32_t TREE_COLOR = TFT_WHITE;
 
 typedef enum {
-  SEED = 3,
-  NEW = 2,
-  FULL = 1,
   EMPTY = 0,
-  OUT_OF_BOUNDS = -1,
+  OUT_OF_BOUNDS = 1,
+  SEED,
+  NEW,
+  FULL,
+  TRAIL,
 } State;
 
 typedef struct {
@@ -34,6 +35,8 @@ typedef struct {
 
 /*int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 0, -1, 0};
 int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 0, -1};*/
+
+int GLOBAL_PARTICLE_COUNT = 1;
 
 int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 1, 0, -1, -1, -1, 0, 1};
 int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 1, 1, 0, -1, -1, -1};
@@ -72,7 +75,6 @@ void setup() {
 void loop() {
   static Walker p = {.x = CENTRE_X, .y = CENTRE_Y};
   static unsigned long prevUpdate = millis();
-  static int num_particles = 0;
   static int radius = 3;
   static int growth_bar = 10;
   static bool respawn = false;
@@ -83,10 +85,10 @@ void loop() {
     respawn = true;
   }
   if (stick(grid, &p) == 1) {
-    num_particles++;
-    if (radius < 100 && num_particles % growth_bar == 0) {
-      if (num_particles < 100) radius++;
-      if (num_particles == 100) growth_bar = 20;
+    GLOBAL_PARTICLE_COUNT++;
+    if (radius < 100 && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
+      if (GLOBAL_PARTICLE_COUNT < 100) radius++;
+      if (GLOBAL_PARTICLE_COUNT == 100) growth_bar = 20;
       radius++;
     }
     respawn = true;
@@ -103,7 +105,7 @@ void loop() {
     force_refresh = false;
     prevUpdate = millis();
     tft.setCursor(0,0);
-    tft.printf("%-5d", num_particles);
+    tft.printf("%-5d", GLOBAL_PARTICLE_COUNT);
     delay(SLEEP_MILLIS);
   }
 }
@@ -176,6 +178,7 @@ uint32_t colourMap(int state) {
     case SEED:
     case FULL: return TREE_COLOR;
     case EMPTY: return BG_COLOR;
+    case TRAIL: return 0x2965;
     default:
       int val = (state > 31) ? 31 : state;
       return ((val << 11) | (1+2*val << 5) | val);
@@ -190,7 +193,6 @@ void drawGrid(int grid[][COLS]) {
       if (grid[y][x] == OUT_OF_BOUNDS) continue;
       cell_colour = colourMap(grid[y][x]);
       tft.drawPixel(x, y, cell_colour);
-      if (grid[y][x] == NEW) grid[y][x] = EMPTY;
     }
   }
 }
