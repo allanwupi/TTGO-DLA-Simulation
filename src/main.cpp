@@ -21,6 +21,7 @@ uint32_t NEW_COLOUR = TFT_GREEN;
 
 uint32_t HUE[NUM_COLOURS] = {
   TFT_WHITE,
+  TFT_PINK,
   TFT_MAGENTA,
   TFT_RED,
   TFT_ORANGE,
@@ -29,7 +30,6 @@ uint32_t HUE[NUM_COLOURS] = {
   TFT_CYAN,
   TFT_BLUE,
   TFT_PURPLE,
-  TFT_DARKGREY,
 };
 
 typedef enum {
@@ -81,7 +81,7 @@ void setup() {
   for (int x = 0; x < 30; x++) {
     for (int y = 0; y < 9; y++) {
       grid[y][x] = OUT_OF_BOUNDS;
-      // tft.drawPixel(x, y, TFT_GREEN);
+      //tft.drawPixel(x, y, HUE[NUM_COLOURS-1]);
     }
   }
 
@@ -192,9 +192,9 @@ uint32_t colourMap(int state) {
     case EMPTY:
       return BG_COLOUR;
     default:
-      state -= ((int)FULL + 1);
-      if (state >= NUM_COLOURS) state = NUM_COLOURS-1;
-      return HUE[state];
+      int i = state / COLOUR_SWITCH;
+      if (i >= NUM_COLOURS) i = NUM_COLOURS-1;
+      return HUE[i];
   }
 }
 
@@ -205,7 +205,7 @@ void drawGrid(int grid[][COLS]) {
     for (int y = 0; y < ROWS; y++) {
       if (grid[y][x] == OUT_OF_BOUNDS) continue;
       if (grid[y][x] == FULL)
-        grid[y][x] = ((int)FULL + 1) + GLOBAL_PARTICLE_COUNT / COLOUR_SWITCH;
+        grid[y][x] = GLOBAL_PARTICLE_COUNT;
       cell_colour = colourMap(grid[y][x]);
       tft.drawPixel(x, y, cell_colour);
       if (grid[y][x] == NEW) grid[y][x] = EMPTY;
