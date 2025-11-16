@@ -9,26 +9,25 @@
 #define CENTRE_Y 85
 #define NUM_WALK_DIRECTIONS 8 // Moore
 #define SLEEP_MILLIS 100
-#define NUM_SHADES 10
-#define ERROR_FLAG -1
+#define NUM_SHADES 9
+#define COLOUR_SWITCH 100
 
 // Colours
-uint32_t TEXT_COLOR = TFT_CYAN;
-uint32_t BG_COLOR = TFT_BLACK;
-uint32_t NEW_COLOR = TFT_CYAN;
-uint32_t SEED_COLOR = TFT_WHITE;
-uint32_t TREE_COLOR = TFT_WHITE;
-
+uint32_t TEXT_COLOUR = TFT_CYAN;
+uint32_t BG_COLOUR = TFT_BLACK;
+uint32_t NEW_COLOUR = TFT_CYAN;
+uint32_t TRAIL_COLOUR = 0x3186;
+uint32_t SEED_COLOUR = TFT_WHITE;
+uint32_t TREE_COLOUR = TFT_WHITE;
 
 uint32_t shades[NUM_SHADES];
 
 typedef enum {
+  SEED = -3,
+  NEW = -2,
+  OUT_OF_BOUNDS = -1,
   EMPTY = 0,
-  OUT_OF_BOUNDS = 1,
-  SEED,
-  NEW,
-  FULL,
-  TRAIL
+  FULL = 1,
 } State;
 
 typedef struct {
@@ -62,8 +61,8 @@ void setup() {
 
   tft.init();
   tft.setRotation(DEFAULT_ROTATION);
-  tft.fillScreen(BG_COLOR);
-  tft.setTextColor(TEXT_COLOR, BG_COLOR);
+  tft.fillScreen(BG_COLOUR);
+  tft.setTextColor(TEXT_COLOUR, BG_COLOUR);
   tft.setTextFont(0);
   tft.setTextSize(1);
   randomSeed(analogRead(RANDOM_SEED_PIN));
@@ -75,9 +74,16 @@ void setup() {
     }
   }
 
-  for (int i = 0; i < NUM_SHADES; i += 2) {
-    shades[i] = ((31-i << 11) | (2*(31-i)+1 << 5) | 31-i);
-  }
+  //for (int i = 0; i < NUM_SHADES; i += 2) shades[i] = ((31-i << 11) | (2*(31-i)+1 << 5) | 31-i);
+  shades[0] = TFT_WHITE;
+  shades[1] = TFT_RED;
+  shades[2] = TFT_ORANGE;
+  shades[3] = TFT_YELLOW;
+  shades[4] = TFT_GREEN;
+  shades[5] = TFT_CYAN;
+  shades[6] = TFT_BLUE;
+  shades[7] = TFT_PURPLE;
+  shades[8] = TFT_DARKGREY;
 }
 
 void loop() {
@@ -150,7 +156,6 @@ void spawn(Walker *ptr, int radius) {
 // returns 0 if particle moved successfully within bounds
 // returns 1 if particle moved out of bounds
 int walk(int grid[][COLS], Walker *ptr) {
-  if (ptr == NULL) return ERROR_FLAG;
   int direction = random(0, NUM_WALK_DIRECTIONS);
   ptr->x += VECTOR_X[direction];
   ptr->y += VECTOR_Y[direction];
@@ -164,7 +169,6 @@ int walk(int grid[][COLS], Walker *ptr) {
 // returns 1 if non-empty cell detected within Moore neighbourhood
 // returns 0 if no non-empty cells are in the neighbourhood
 int stick(int grid[][COLS], Walker *ptr) {
-  if (ptr == NULL) return ERROR_FLAG;
   int nx, ny;
   for (int i = 0; i < NUM_WALK_DIRECTIONS; i++) {
     nx = ptr->x + VECTOR_X[i];
@@ -172,7 +176,7 @@ int stick(int grid[][COLS], Walker *ptr) {
     if (outOfBounds(nx, ny)) {
       continue;
     }
-    if (grid[ny][nx] == SEED || grid[ny][nx] == FULL) {
+    if (grid[ny][nx] != EMPTY && grid[ny][nx] != NEW && grid[ny][nx] != OUT_OF_BOUNDS) {
       grid[ptr->y][ptr->x] = FULL;
       return 1;
     }
@@ -181,21 +185,17 @@ int stick(int grid[][COLS], Walker *ptr) {
 }
 
 uint32_t colourMap(int state) {
-  int i = GLOBAL_PARTICLE_COUNT / 200;
   switch (state) {
     case NEW:
-      return NEW_COLOR;
+      return NEW_COLOUR;
     case SEED:
-    case FULL: // return TREE_COLOR;
-      if (i > NUM_SHADES) i = NUM_SHADES;
-      return shades[i];
+      return SEED_COLOUR;
     case EMPTY:
-      return BG_COLOR;
-    case TRAIL:
-      return 0x2965;
+      return BG_COLOUR;
     default:
-      int val = (state > 31) ? 31 : state;
-      return ((val << 11) | (1+2*val << 5) | val);
+      state -= 2;
+      if (state >= NUM_SHADES) state = NUM_SHADES-2;
+      return shades[state];
   }
 }
 
@@ -205,9 +205,10 @@ void drawGrid(int grid[][COLS]) {
   for (int x = 0; x < COLS; x++) {
     for (int y = 0; y < ROWS; y++) {
       if (grid[y][x] == OUT_OF_BOUNDS) continue;
+      if (grid[y][x] == FULL) grid[y][x] = 2+GLOBAL_PARTICLE_COUNT / COLOUR_SWITCH;
       cell_colour = colourMap(grid[y][x]);
       tft.drawPixel(x, y, cell_colour);
-      if (grid[y][x] == NEW || grid[y][x] == TRAIL) grid[y][x] = EMPTY;
+      if (grid[y][x] == NEW) grid[y][x] = EMPTY;
     }
   }
 }
