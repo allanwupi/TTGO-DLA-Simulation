@@ -2,22 +2,21 @@
 #include <TFT_eSPI.h>
 #include <math.h>
 
-#define PARTICLE_NUM 5
+#define PARTICLE_NUM 5 (not used)
 #define COLS 320
 #define ROWS 170
 #define CENTRE_X 160
 #define CENTRE_Y 85
 #define NUM_WALK_DIRECTIONS 8 // Moore
-#define SLEEP_MILLIS 100
+#define SLEEP_MILLIS 100 // (not used)
 #define NUM_COLOURS 10
 #define COLOUR_SWITCH 200
 
 // Colours
-uint32_t TEXT_COLOUR = TFT_SILVER;
+uint32_t TEXT_COLOUR = TFT_GREEN;
 uint32_t BG_COLOUR = TFT_BLACK;
-uint32_t NEW_COLOUR = TFT_WHITE;
-uint32_t TRAIL_COLOUR = 0x3186;
 uint32_t SEED_COLOUR = TFT_WHITE;
+uint32_t NEW_COLOUR = TFT_GREEN;
 
 uint32_t HUE[NUM_COLOURS] = {
   TFT_WHITE,
@@ -101,8 +100,9 @@ void loop() {
   if (stick(grid, &p) == 1) {
     GLOBAL_PARTICLE_COUNT++;
     if (radius < 100 && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
-      if (GLOBAL_PARTICLE_COUNT < 200) radius++;
-      if (GLOBAL_PARTICLE_COUNT == 200) growth_bar = 20;
+      if (GLOBAL_PARTICLE_COUNT < 100) radius++;
+      if (GLOBAL_PARTICLE_COUNT == 250) growth_bar = 25;
+      if (GLOBAL_PARTICLE_COUNT == 500) growth_bar = 50;
       radius++;
     }
     respawn = true;
@@ -119,7 +119,6 @@ void loop() {
     prevUpdate = millis();
     tft.setCursor(0,0);
     tft.printf("%-5d", GLOBAL_PARTICLE_COUNT);
-    delay(SLEEP_MILLIS);
   }
 }
 
