@@ -3,12 +3,13 @@
 #include <math.h>
 
 #define PARTICLE_NUM 5 (not used)
+#define MAX_SPAWN_RADIUS 85
 #define COLS 320
 #define ROWS 170
 #define CENTRE_X 160
 #define CENTRE_Y 85
 #define NUM_WALK_DIRECTIONS 8 // Moore
-#define SLEEP_MILLIS 100 // (not used)
+#define SLEEP_MILLIS 75 // (not used)
 #define NUM_COLOURS 10
 #define COLOUR_SWITCH 200
 
@@ -28,7 +29,7 @@ uint32_t HUE[NUM_COLOURS] = {
   TFT_CYAN,
   TFT_BLUE,
   TFT_PURPLE,
-  TFT_SILVER,
+  TFT_DARKGREY,
 };
 
 typedef enum {
@@ -99,7 +100,7 @@ void loop() {
   }
   if (stick(grid, &p) == 1) {
     GLOBAL_PARTICLE_COUNT++;
-    if (radius < 100 && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
+    if (radius < MAX_SPAWN_RADIUS && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
       if (GLOBAL_PARTICLE_COUNT < 200) radius++;
       if (GLOBAL_PARTICLE_COUNT == 200) growth_bar = 20;
       radius++;
@@ -128,12 +129,12 @@ bool outOfBounds(int x, int y) {
 void spawn(Walker *ptr, int radius) {
   if (ptr == NULL) return;
   int x = 0, y = 0;
-  if (radius < 100) {
+  if (radius < MAX_SPAWN_RADIUS) {
     float angle = (float)random(0, 360) * M_PI / 180.0;
     x = radius * cos(angle) + CENTRE_X;
     y = radius * sin(angle) + CENTRE_Y;
   } else {
-    while (x*x + y*y < 10000) {
+    while (x*x + y*y < MAX_SPAWN_RADIUS * MAX_SPAWN_RADIUS) {
       x = random(0,320+1);
       y = random(0,170+1);
     }
