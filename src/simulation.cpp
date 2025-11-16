@@ -7,7 +7,23 @@ int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 1, 0, -1, -1, -1, 0, 1};
 int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 1, 1, 0, -1, -1, -1};
 
 void seed(int grid[][COLS]) {
-  grid[CENTRE_Y][CENTRE_X] = SEED;
+  const int select_seed = 1;
+  switch (select_seed) {
+    case 2: // Circle
+      for (int o = 0; o < 360; o += 2) {
+        float angle = o * M_PI / 180.0;
+        int x = round(80 * cos(angle) + CENTRE_X);
+        int y = round(80 * sin(angle) + CENTRE_Y);
+        grid[y][x] = SEED;
+      }
+      break;
+    case 1: // Bottom line
+      for (int x = 0; x < COLS; x++) grid[ROWS-1][x] = SEED;
+      break;
+    case 0: // Centre
+    default: //
+      grid[CENTRE_Y][CENTRE_X] = SEED;
+  }
 }
 
 bool outOfBounds(int x, int y) {
