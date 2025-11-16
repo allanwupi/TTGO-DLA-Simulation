@@ -13,6 +13,9 @@
 #define NUM_COLOURS 10
 #define COLOUR_SWITCH 200
 
+#define DEFAULT_ROTATION 1
+#define RANDOM_SEED_PIN 1
+
 // Colours
 uint32_t TEXT_COLOUR = TFT_GREEN;
 uint32_t BG_COLOUR = TFT_BLACK;
@@ -58,6 +61,7 @@ int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 1, 1, 0, -1, -1, -1};
 TFT_eSPI tft = TFT_eSPI();
 int grid[ROWS][COLS] = {0};
 
+void seed(int grid[][COLS]);
 void spawn(Walker *ptr, int radius);
 bool outOfBounds(int x, int y);
 int walk(int grid[][COLS], Walker *ptr);
@@ -66,8 +70,6 @@ uint32_t colourMap(int state);
 void drawGrid(int grid[][COLS]);
 
 void setup() {
-  int DEFAULT_ROTATION = 3;
-  int RANDOM_SEED_PIN = 1;
   // Serial.begin(115200);
 
   tft.init();
@@ -85,6 +87,7 @@ void setup() {
     }
   }
 
+  seed(grid);
   //for (int i = 0; i < NUM_COLOURS; i += 2) HUE[i] = ((31-i << 11) | (2*(31-i)+1 << 5) | 31-i);
 }
 
@@ -95,7 +98,6 @@ void loop() {
   static int growth_bar = 10;
   static bool respawn = false;
   static bool draw_screen = false;
-  grid[CENTRE_Y][CENTRE_X] = SEED;
   if (walk(grid, &p) == 1) {
     respawn = true;
   }
@@ -121,6 +123,10 @@ void loop() {
     tft.setCursor(0,0);
     tft.printf("%-5d", GLOBAL_PARTICLE_COUNT);
   }
+}
+
+void seed(int grid[][COLS]) {
+  grid[CENTRE_Y][CENTRE_X] = SEED;
 }
 
 bool outOfBounds(int x, int y) {
