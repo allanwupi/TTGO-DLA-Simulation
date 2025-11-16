@@ -8,6 +8,19 @@ uint32_t NEW_COLOUR = TFT_GREEN;
 
 extern TFT_eSPI tft;
 
+uint32_t HUE[NUM_COLOURS] = {
+  TFT_WHITE,
+  TFT_PINK,
+  TFT_MAGENTA,
+  TFT_RED,
+  TFT_ORANGE,
+  TFT_YELLOW,
+  TFT_GREEN,
+  TFT_CYAN,
+  TFT_BLUE,
+  TFT_PURPLE,
+};
+
 uint32_t colourMap(int state) {
   switch (state) {
     case NEW:

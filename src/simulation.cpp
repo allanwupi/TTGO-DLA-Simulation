@@ -6,19 +6,6 @@ int GLOBAL_PARTICLE_COUNT = 1;
 int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 1, 0, -1, -1, -1, 0, 1};
 int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 1, 1, 0, -1, -1, -1};
 
-uint32_t HUE[NUM_COLOURS] = {
-  TFT_WHITE,
-  TFT_PINK,
-  TFT_MAGENTA,
-  TFT_RED,
-  TFT_ORANGE,
-  TFT_YELLOW,
-  TFT_GREEN,
-  TFT_CYAN,
-  TFT_BLUE,
-  TFT_PURPLE,
-};
-
 void seed(int grid[][COLS]) {
   grid[CENTRE_Y][CENTRE_X] = SEED;
 }
