@@ -5,6 +5,8 @@ Simulate randomly walking particles and growth of Brownian trees on the T-Displa
 
 Initially inspired by [this Youtube video](https://www.youtube.com/watch?v=gsJHzBTPG0Y) about procedural mountain generation. See the [Wikipedia article on DLA](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation) for more details.
 
+![Example Brownian tree.](https://github.com/allanwupi/TTGO-DLA-Simulation/blob/main/img/IMG_0146.jpg)
+
 Current Implementation
 ---
 
@@ -24,6 +26,6 @@ There are some excellent animations on [this page about cellular automata](https
 2. Add alternative seed configurations, e.g. straight line at the bottom
 3. Add a 'gravity' force that attracts particles towards the centre of mass
 4. Support multiple particles moving about simultaneously
-5. Make a colour palette for particles based on simulation time
+5. Test out various colour palettes and ways of storing particle lifetime
 
 Note: drawing the trails of the particles slows down the simulation much more and doesn't seem worthwhile.
