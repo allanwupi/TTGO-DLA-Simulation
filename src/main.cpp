@@ -2,7 +2,7 @@
 #include <TFT_eSPI.h>
 #include <math.h>
 
-#define PARTICLE_NUM 5 // (not used)
+#define NUM_PARTICLES 5
 #define MAX_SPAWN_RADIUS 85
 #define COLS 320
 #define ROWS 170
@@ -12,6 +12,9 @@
 #define SLEEP_MILLIS 75 // (not used)
 #define NUM_COLOURS 10
 #define COLOUR_SWITCH 200
+
+#define DEFAULT_ROTATION 1
+#define RANDOM_SEED_PIN 1
 
 // Colours
 uint32_t TEXT_COLOUR = TFT_GREEN;
@@ -44,7 +47,6 @@ typedef enum {
 typedef struct {
   int x;
   int y;
-  State s;
 } Walker;
 
 /*int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 0, -1, 0};
@@ -66,10 +68,7 @@ uint32_t colourMap(int state);
 void drawGrid(int grid[][COLS]);
 
 void setup() {
-  int DEFAULT_ROTATION = 3;
-  int RANDOM_SEED_PIN = 1;
   // Serial.begin(115200);
-
   tft.init();
   tft.setRotation(DEFAULT_ROTATION);
   tft.fillScreen(BG_COLOUR);
@@ -89,29 +88,36 @@ void setup() {
 }
 
 void loop() {
-  static Walker p = {.x = CENTRE_X, .y = CENTRE_Y};
+  static Walker p1 = {.x = CENTRE_X, .y = CENTRE_Y};
+  static Walker p2 = {.x = CENTRE_X, .y = CENTRE_Y};
+  static Walker p3 = {.x = CENTRE_X, .y = CENTRE_Y};
+  static Walker p4 = {.x = CENTRE_X, .y = CENTRE_Y};
+  static Walker p5 = {.x = CENTRE_X, .y = CENTRE_Y};
+  static Walker *ptrs[NUM_PARTICLES] = {&p1, &p2, &p3, &p4, &p5};
   static unsigned long prevUpdate = millis();
   static int radius = 3;
   static int growth_bar = 10;
   static bool respawn = false;
   static bool draw_screen = false;
   grid[CENTRE_Y][CENTRE_X] = SEED;
-  if (walk(grid, &p) == 1) {
-    respawn = true;
-  }
-  if (stick(grid, &p) == 1) {
-    GLOBAL_PARTICLE_COUNT++;
-    if (radius < MAX_SPAWN_RADIUS && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
-      if (GLOBAL_PARTICLE_COUNT < 200) radius++;
-      if (GLOBAL_PARTICLE_COUNT == 200) growth_bar = 20;
-      radius++;
+  for (int i = 0; i < NUM_PARTICLES; i++) {
+    if (walk(grid, ptrs[i]) == 1) {
+      respawn = true;
     }
-    respawn = true;
-    draw_screen = true;
-  }
-  if (respawn) {
-    spawn(&p, radius);
-    respawn = false;
+    if (stick(grid, ptrs[i]) == 1) {
+      GLOBAL_PARTICLE_COUNT++;
+      if (radius < MAX_SPAWN_RADIUS && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
+        if (GLOBAL_PARTICLE_COUNT < 200) radius++;
+        if (GLOBAL_PARTICLE_COUNT == 200) growth_bar = 20;
+        radius++;
+      }
+      respawn = true;
+      draw_screen = true;
+    }
+    if (respawn) {
+      spawn(ptrs[i], radius);
+      respawn = false;
+    } 
   }
   // Serial.printf("r=%d, x=%d, y=%d\n", radius, p.x, p.y);
   if (draw_screen) {
@@ -142,7 +148,6 @@ void spawn(Walker *ptr, int radius) {
   }
   ptr->x = x;
   ptr->y = y;
-  ptr->s = NEW;
   // Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
   if (outOfBounds(x, y) || grid[y][x] != EMPTY) {
     // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
