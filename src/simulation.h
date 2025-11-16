@@ -10,7 +10,7 @@
 #define CENTRE_X 160
 #define CENTRE_Y 85
 #define NUM_COLOURS 10
-#define COLOUR_SWITCH 250
+#define COLOUR_SWITCH 200
 
 typedef enum {
   SEED = -3,

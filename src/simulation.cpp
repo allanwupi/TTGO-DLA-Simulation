@@ -29,7 +29,7 @@ void spawn(int grid[][COLS], Walker *ptr, int radius) {
   ptr->y = y;
   // ptr->s = NEW;
   // Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
-  if (outOfBounds(x, y) || grid[y][x] != EMPTY) {
+  if (outOfBounds(x, y) || grid[y][x] != EMPTY || abs(x-CENTRE_X)+abs(y-CENTRE_Y) < radius) {
     // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
     spawn(grid, ptr, radius);
   } else {
