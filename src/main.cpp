@@ -17,6 +17,7 @@ typedef enum {
   SEED = 2,
   FULL = 1,
   EMPTY = 0,
+  OUT_OF_BOUNDS = -1,
 } State;
 
 typedef struct {
@@ -49,8 +50,8 @@ void setup() {
   tft.init();
   tft.setRotation(DEFAULT_ROTATION);
   tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
-  tft.setTextSize(2);
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  tft.setTextSize(1);
   randomSeed(analogRead(RANDOM_SEED_PIN));
 }
 
@@ -59,7 +60,6 @@ void loop() {
   static unsigned long prevUpdate = millis();
   static int num_particles = 0;
   static int radius = 3;
-  static int increment = 1;
   static bool respawn = false;
   static bool force_refresh = false;
   // MAIN PROGRAM LOOP
@@ -69,10 +69,10 @@ void loop() {
   }
   if (stick(grid, &p) == 1) {
     num_particles++;
-    if (num_particles % 10 == 0) {
-      radius += 1;
+    if (radius < 100 && num_particles % 10 == 0) {
+      if (num_particles < 100) radius++;
+      radius++;
     }
-    if (radius > 80) radius = 80; // temporary cap
     respawn = true;
     force_refresh = true;
   }
@@ -86,6 +86,8 @@ void loop() {
     drawGrid(grid);
     force_refresh = false;
     prevUpdate = millis();
+    tft.setCursor(0,0);
+    tft.printf("%d   ", num_particles);
     delay(SLEEP_MILLIS);
   }
 }
@@ -96,11 +98,21 @@ bool outOfBounds(int x, int y) {
 
 void spawn(Walker *ptr, int radius) {
   if (ptr == NULL) return;
-  float angle = (float)random(0, 360) * M_PI / 180.0;
-  int x = radius * cos(angle);
-  int y = radius * sin(angle);
-  ptr->x = x + CENTRE_X;
-  ptr->y = y + CENTRE_Y;
+  if (radius < 100) {
+    float angle = (float)random(0, 360) * M_PI / 180.0;
+    int x = radius * cos(angle);
+    int y = radius * sin(angle);
+    ptr->x = x + CENTRE_X;
+    ptr->y = y + CENTRE_Y;
+  } else {
+    int x = 0, y = 0;
+    while (x*x + y*y < 10000) {
+      x = random(0,320+1);
+      y = random(0,170+1);
+    }
+    ptr->x = x;
+    ptr->y = y;
+  }
   // Serial.printf("spawned @ x=%d, y=%d\n",ptr->x,ptr->y);
   ptr->s = FULL;
   if (!outOfBounds(ptr->x, ptr->y)) {
@@ -161,6 +173,7 @@ void drawGrid(int grid[][COLS]) {
   int cell_colour;
   for (int x = 0; x < COLS; x++) {
     for (int y = 0; y < ROWS; y++) {
+      if (grid[y][x] == OUT_OF_BOUNDS) continue;
       cell_colour = colourMap(grid[y][x]);
       tft.drawPixel(x, y, cell_colour);
     }
