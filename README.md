@@ -24,5 +24,6 @@ There are some excellent animations on [this page about cellular automata](https
 2. Add alternative seed configurations, e.g. straight line at the bottom
 3. Add a 'gravity' force that attracts particles towards the centre of mass
 4. Support multiple particles moving about simultaneously
-5. Draw decaying trails to show the Brownian motion of the particles
-6. Make a colour palette for particles based on simulation time
+5. Make a colour palette for particles based on simulation time
+
+Note: drawing the trails of the particles slows down the simulation much more and doesn't seem worthwhile.
