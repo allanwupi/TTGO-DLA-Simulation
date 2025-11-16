@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <math.h>
-#include <limits.h>
 
 // #define PARTICLE_NUM 5
 #define COLS 320
@@ -12,6 +11,12 @@
 #define NUM_WALK_DIRECTIONS 8
 #define SLEEP_MILLIS 100
 #define ERROR_FLAG -1
+
+uint32_t BG_COLOR = TFT_BLACK;
+uint32_t TEXT_COLOR = TFT_WHITE;
+uint32_t NEW_COLOR = TFT_WHITE;
+uint32_t SEED_COLOR = TFT_WHITE;
+uint32_t TREE_COLOR = TFT_WHITE;
 
 typedef enum {
   SEED = 3,
@@ -50,8 +55,8 @@ void setup() {
 
   tft.init();
   tft.setRotation(DEFAULT_ROTATION);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  tft.fillScreen(BG_COLOR);
+  tft.setTextColor(TEXT_COLOR, BG_COLOR);
   tft.setTextFont(0);
   tft.setTextSize(1);
   randomSeed(analogRead(RANDOM_SEED_PIN));
@@ -167,10 +172,10 @@ int stick(int grid[][COLS], Walker *ptr) {
 
 uint32_t colourMap(int state) {
   switch (state) {
-    case NEW: return TFT_GREEN;
+    case NEW: return NEW_COLOR;
     case SEED:
-    case FULL: return TFT_WHITE;
-    case EMPTY: return TFT_BLACK;
+    case FULL: return TREE_COLOR;
+    case EMPTY: return BG_COLOR;
     default:
       int val = (state > 31) ? 31 : state;
       return ((val << 11) | (1+2*val << 5) | val);
