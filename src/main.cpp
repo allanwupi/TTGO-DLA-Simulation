@@ -9,18 +9,28 @@
 #define CENTRE_Y 85
 #define NUM_WALK_DIRECTIONS 8 // Moore
 #define SLEEP_MILLIS 100
-#define NUM_SHADES 9
-#define COLOUR_SWITCH 100
+#define NUM_COLOURS 10
+#define COLOUR_SWITCH 200
 
 // Colours
-uint32_t TEXT_COLOUR = TFT_CYAN;
+uint32_t TEXT_COLOUR = TFT_SILVER;
 uint32_t BG_COLOUR = TFT_BLACK;
-uint32_t NEW_COLOUR = TFT_CYAN;
+uint32_t NEW_COLOUR = TFT_WHITE;
 uint32_t TRAIL_COLOUR = 0x3186;
 uint32_t SEED_COLOUR = TFT_WHITE;
-uint32_t TREE_COLOUR = TFT_WHITE;
 
-uint32_t shades[NUM_SHADES];
+uint32_t HUE[NUM_COLOURS] = {
+  TFT_WHITE,
+  TFT_MAGENTA,
+  TFT_RED,
+  TFT_ORANGE,
+  TFT_YELLOW,
+  TFT_GREEN,
+  TFT_CYAN,
+  TFT_BLUE,
+  TFT_PURPLE,
+  TFT_SILVER,
+};
 
 typedef enum {
   SEED = -3,
@@ -57,7 +67,7 @@ void drawGrid(int grid[][COLS]);
 void setup() {
   int DEFAULT_ROTATION = 3;
   int RANDOM_SEED_PIN = 1;
-  Serial.begin(115200);
+  // Serial.begin(115200);
 
   tft.init();
   tft.setRotation(DEFAULT_ROTATION);
@@ -74,16 +84,7 @@ void setup() {
     }
   }
 
-  //for (int i = 0; i < NUM_SHADES; i += 2) shades[i] = ((31-i << 11) | (2*(31-i)+1 << 5) | 31-i);
-  shades[0] = TFT_WHITE;
-  shades[1] = TFT_RED;
-  shades[2] = TFT_ORANGE;
-  shades[3] = TFT_YELLOW;
-  shades[4] = TFT_GREEN;
-  shades[5] = TFT_CYAN;
-  shades[6] = TFT_BLUE;
-  shades[7] = TFT_PURPLE;
-  shades[8] = TFT_DARKGREY;
+  //for (int i = 0; i < NUM_COLOURS; i += 2) HUE[i] = ((31-i << 11) | (2*(31-i)+1 << 5) | 31-i);
 }
 
 void loop() {
@@ -92,8 +93,7 @@ void loop() {
   static int radius = 3;
   static int growth_bar = 10;
   static bool respawn = false;
-  static bool force_refresh = false;
-  // MAIN PROGRAM LOOP
+  static bool draw_screen = false;
   grid[CENTRE_Y][CENTRE_X] = SEED;
   if (walk(grid, &p) == 1) {
     respawn = true;
@@ -101,22 +101,21 @@ void loop() {
   if (stick(grid, &p) == 1) {
     GLOBAL_PARTICLE_COUNT++;
     if (radius < 100 && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
-      if (GLOBAL_PARTICLE_COUNT < 100) radius++;
-      if (GLOBAL_PARTICLE_COUNT == 100) growth_bar = 20;
+      if (GLOBAL_PARTICLE_COUNT < 200) radius++;
+      if (GLOBAL_PARTICLE_COUNT == 200) growth_bar = 20;
       radius++;
     }
     respawn = true;
-    force_refresh = true;
+    draw_screen = true;
   }
   if (respawn) {
     spawn(&p, radius);
     respawn = false;
   }
   // Serial.printf("r=%d, x=%d, y=%d\n", radius, p.x, p.y);
-  // REFRESH SCREEN
-  if (force_refresh) {
+  if (draw_screen) {
     drawGrid(grid);
-    force_refresh = false;
+    draw_screen = false;
     prevUpdate = millis();
     tft.setCursor(0,0);
     tft.printf("%-5d", GLOBAL_PARTICLE_COUNT);
@@ -144,8 +143,8 @@ void spawn(Walker *ptr, int radius) {
   ptr->x = x;
   ptr->y = y;
   ptr->s = NEW;
-  Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
-  if (outOfBounds(x, y) || grid[y][x] == OUT_OF_BOUNDS) {
+  // Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
+  if (outOfBounds(x, y) || grid[y][x] != EMPTY) {
     // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
     spawn(ptr, radius);
   } else {
@@ -194,8 +193,8 @@ uint32_t colourMap(int state) {
       return BG_COLOUR;
     default:
       state -= 2;
-      if (state >= NUM_SHADES) state = NUM_SHADES-2;
-      return shades[state];
+      if (state >= NUM_COLOURS) state = NUM_COLOURS-2;
+      return HUE[state];
   }
 }
 
