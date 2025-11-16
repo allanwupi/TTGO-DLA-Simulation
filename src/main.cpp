@@ -1,73 +1,14 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <math.h>
+#include "simulation.h"
 
-#define PARTICLE_NUM 5 // (not used)
-#define MAX_SPAWN_RADIUS 85
-#define COLS 320
-#define ROWS 170
-#define CENTRE_X 160
-#define CENTRE_Y 85
-#define NUM_WALK_DIRECTIONS 8 // Moore
 #define SLEEP_MILLIS 75 // (not used)
-#define NUM_COLOURS 10
-#define COLOUR_SWITCH 200
-
 #define DEFAULT_ROTATION 1
 #define RANDOM_SEED_PIN 1
 
-// Colours
-uint32_t TEXT_COLOUR = TFT_GREEN;
-uint32_t BG_COLOUR = TFT_BLACK;
-uint32_t SEED_COLOUR = TFT_WHITE;
-uint32_t NEW_COLOUR = TFT_GREEN;
-
-uint32_t HUE[NUM_COLOURS] = {
-  TFT_WHITE,
-  TFT_PINK,
-  TFT_MAGENTA,
-  TFT_RED,
-  TFT_ORANGE,
-  TFT_YELLOW,
-  TFT_GREEN,
-  TFT_CYAN,
-  TFT_BLUE,
-  TFT_PURPLE,
-};
-
-typedef enum {
-  SEED = -3,
-  NEW = -2,
-  OUT_OF_BOUNDS = -1,
-  EMPTY = 0,
-  FULL = 1,
-  // values above 1 map to HUE colours
-} State;
-
-typedef struct {
-  int x;
-  int y;
-  State s;
-} Walker;
-
-/*int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 0, -1, 0};
-int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 0, -1};*/
-
-int GLOBAL_PARTICLE_COUNT = 1;
-
-int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 1, 0, -1, -1, -1, 0, 1};
-int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 1, 1, 0, -1, -1, -1};
-
 TFT_eSPI tft = TFT_eSPI();
-int grid[ROWS][COLS] = {0};
-
-void seed(int grid[][COLS]);
-void spawn(Walker *ptr, int radius);
-bool outOfBounds(int x, int y);
-int walk(int grid[][COLS], Walker *ptr);
-int stick(int grid[][COLS], Walker *ptr);
-uint32_t colourMap(int state);
-void drawGrid(int grid[][COLS]);
+int world[ROWS][COLS] = {0};
 
 void setup() {
   // Serial.begin(115200);
@@ -82,12 +23,12 @@ void setup() {
 
   for (int x = 0; x < 30; x++) {
     for (int y = 0; y < 9; y++) {
-      grid[y][x] = OUT_OF_BOUNDS;
+      world[y][x] = OUT_OF_BOUNDS;
       //tft.drawPixel(x, y, HUE[NUM_COLOURS-1]);
     }
   }
 
-  seed(grid);
+  seed(world);
   //for (int i = 0; i < NUM_COLOURS; i += 2) HUE[i] = ((31-i << 11) | (2*(31-i)+1 << 5) | 31-i);
 }
 
@@ -98,10 +39,10 @@ void loop() {
   static int growth_bar = 10;
   static bool respawn = false;
   static bool draw_screen = false;
-  if (walk(grid, &p) == 1) {
+  if (walk(world, &p) == 1) {
     respawn = true;
   }
-  if (stick(grid, &p) == 1) {
+  if (stick(world, &p) == 1) {
     GLOBAL_PARTICLE_COUNT++;
     if (radius < MAX_SPAWN_RADIUS && GLOBAL_PARTICLE_COUNT % growth_bar == 0) {
       if (GLOBAL_PARTICLE_COUNT < 200) radius++;
@@ -112,109 +53,15 @@ void loop() {
     draw_screen = true;
   }
   if (respawn) {
-    spawn(&p, radius);
+    spawn(world, &p, radius);
     respawn = false;
   }
   // Serial.printf("r=%d, x=%d, y=%d\n", radius, p.x, p.y);
   if (draw_screen) {
-    drawGrid(grid);
+    drawGrid(world);
     draw_screen = false;
     prevUpdate = millis();
     tft.setCursor(0,0);
     tft.printf("%-5d", GLOBAL_PARTICLE_COUNT);
-  }
-}
-
-void seed(int grid[][COLS]) {
-  grid[CENTRE_Y][CENTRE_X] = SEED;
-}
-
-bool outOfBounds(int x, int y) {
-  return (x < 0 || x >= COLS || y < 0 || y >= ROWS);
-}
-
-void spawn(Walker *ptr, int radius) {
-  if (ptr == NULL) return;
-  int x = 0, y = 0;
-  if (radius < MAX_SPAWN_RADIUS) {
-    float angle = (float)random(0, 360) * M_PI / 180.0;
-    x = radius * cos(angle) + CENTRE_X;
-    y = radius * sin(angle) + CENTRE_Y;
-  } else {
-    while (x*x + y*y < MAX_SPAWN_RADIUS * MAX_SPAWN_RADIUS) {
-      x = random(0,320+1);
-      y = random(0,170+1);
-    }
-  }
-  ptr->x = x;
-  ptr->y = y;
-  ptr->s = NEW;
-  // Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
-  if (outOfBounds(x, y) || grid[y][x] != EMPTY) {
-    // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
-    spawn(ptr, radius);
-  } else {
-    grid[ptr->y][ptr->x] = NEW;
-  }
-}
-
-// returns 0 if particle moved successfully within bounds
-// returns 1 if particle moved out of bounds
-int walk(int grid[][COLS], Walker *ptr) {
-  int direction = random(0, NUM_WALK_DIRECTIONS);
-  ptr->x += VECTOR_X[direction];
-  ptr->y += VECTOR_Y[direction];
-  if (outOfBounds(ptr->x, ptr->y)) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-// returns 1 if non-empty cell detected within Moore neighbourhood
-// returns 0 if no non-empty cells are in the neighbourhood
-int stick(int grid[][COLS], Walker *ptr) {
-  int nx, ny;
-  for (int i = 0; i < NUM_WALK_DIRECTIONS; i++) {
-    nx = ptr->x + VECTOR_X[i];
-    ny = ptr->y + VECTOR_Y[i];
-    if (outOfBounds(nx, ny)) {
-      continue;
-    }
-    if (grid[ny][nx] != EMPTY && grid[ny][nx] != NEW && grid[ny][nx] != OUT_OF_BOUNDS) {
-      grid[ptr->y][ptr->x] = FULL;
-      return 1;
-    }
-  }
-  return 0;
-}
-
-uint32_t colourMap(int state) {
-  switch (state) {
-    case NEW:
-      return NEW_COLOUR;
-    case SEED:
-      return SEED_COLOUR;
-    case EMPTY:
-      return BG_COLOUR;
-    default:
-      int i = state / COLOUR_SWITCH;
-      if (i >= NUM_COLOURS) i = NUM_COLOURS-1;
-      return HUE[i];
-  }
-}
-
-void drawGrid(int grid[][COLS]) {
-  if (grid == NULL) return;
-  int cell_colour;
-  for (int x = 0; x < COLS; x++) {
-    for (int y = 0; y < ROWS; y++) {
-      if (grid[y][x] == OUT_OF_BOUNDS) continue;
-      if (grid[y][x] == FULL)
-        grid[y][x] = GLOBAL_PARTICLE_COUNT;
-      cell_colour = colourMap(grid[y][x]);
-      tft.drawPixel(x, y, cell_colour);
-      if (grid[y][x] == NEW) grid[y][x] = EMPTY;
-    }
   }
 }
