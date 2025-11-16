@@ -38,6 +38,7 @@ typedef enum {
   OUT_OF_BOUNDS = -1,
   EMPTY = 0,
   FULL = 1,
+  // values above 1 map to HUE colours
 } State;
 
 typedef struct {
@@ -191,7 +192,7 @@ uint32_t colourMap(int state) {
     case EMPTY:
       return BG_COLOUR;
     default:
-      state -= 2;
+      state -= ((int)FULL + 1);
       if (state >= NUM_COLOURS) state = NUM_COLOURS-2;
       return HUE[state];
   }
@@ -203,7 +204,8 @@ void drawGrid(int grid[][COLS]) {
   for (int x = 0; x < COLS; x++) {
     for (int y = 0; y < ROWS; y++) {
       if (grid[y][x] == OUT_OF_BOUNDS) continue;
-      if (grid[y][x] == FULL) grid[y][x] = 2+GLOBAL_PARTICLE_COUNT / COLOUR_SWITCH;
+      if (grid[y][x] == FULL)
+        grid[y][x] = ((int)FULL + 1) + GLOBAL_PARTICLE_COUNT / COLOUR_SWITCH;
       cell_colour = colourMap(grid[y][x]);
       tft.drawPixel(x, y, cell_colour);
       if (grid[y][x] == NEW) grid[y][x] = EMPTY;
