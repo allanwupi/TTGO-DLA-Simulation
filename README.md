@@ -10,10 +10,11 @@ Initially inspired by [this Youtube video](https://www.youtube.com/watch?v=gsJHz
 Current Implementation
 ---
 
-1. Seed is placed at the centre of the screen
-2. Particle spawned at a random angle, initial circular radius 3
+1. Place seed at the centre of the screen
+2. Spawn particle on circular perimeter: random angle and initial radius 3
 3. Walk particle randomly until it sticks to the seed (Moore neighbourhood)
-4. Repeat with a new particle - increase spawn radius as needed
+4. Respawn particle and repeat - increase spawn circle radius when necessary
+5. Once circle radius exceeds screen width, spawn randomly outside radius instead
 
 Limitations and Planned Features
 ---
