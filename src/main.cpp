@@ -24,7 +24,7 @@ typedef enum {
   SEED,
   NEW,
   FULL,
-  TRAIL,
+  TRAIL
 } State;
 
 typedef struct {
@@ -193,6 +193,7 @@ void drawGrid(int grid[][COLS]) {
       if (grid[y][x] == OUT_OF_BOUNDS) continue;
       cell_colour = colourMap(grid[y][x]);
       tft.drawPixel(x, y, cell_colour);
+      if (grid[y][x] == NEW || grid[y][x] == TRAIL) grid[y][x] = EMPTY;
     }
   }
 }
