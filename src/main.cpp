@@ -193,7 +193,7 @@ uint32_t colourMap(int state) {
       return BG_COLOUR;
     default:
       state -= ((int)FULL + 1);
-      if (state >= NUM_COLOURS) state = NUM_COLOURS-2;
+      if (state >= NUM_COLOURS) state = NUM_COLOURS-1;
       return HUE[state];
   }
 }
