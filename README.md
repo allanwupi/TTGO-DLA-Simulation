@@ -26,4 +26,3 @@ There are some excellent animations on [this page about cellular automata](https
 4. Support multiple particles moving about simultaneously
 5. Draw decaying trails to show the Brownian motion of the particles
 6. Make a colour palette for particles based on simulation time
-

@@ -9,6 +9,7 @@
 #define CENTRE_Y 85
 #define NUM_WALK_DIRECTIONS 8 // Moore
 #define SLEEP_MILLIS 100
+#define NUM_SHADES 10
 #define ERROR_FLAG -1
 
 // Colours
@@ -17,6 +18,9 @@ uint32_t BG_COLOR = TFT_BLACK;
 uint32_t NEW_COLOR = TFT_CYAN;
 uint32_t SEED_COLOR = TFT_WHITE;
 uint32_t TREE_COLOR = TFT_WHITE;
+
+
+uint32_t shades[NUM_SHADES];
 
 typedef enum {
   EMPTY = 0,
@@ -69,6 +73,10 @@ void setup() {
       grid[y][x] = OUT_OF_BOUNDS;
       // tft.drawPixel(x, y, TFT_GREEN);
     }
+  }
+
+  for (int i = 0; i < NUM_SHADES; i += 2) {
+    shades[i] = ((31-i << 11) | (2*(31-i)+1 << 5) | 31-i);
   }
 }
 
@@ -173,12 +181,18 @@ int stick(int grid[][COLS], Walker *ptr) {
 }
 
 uint32_t colourMap(int state) {
+  int i = GLOBAL_PARTICLE_COUNT / 200;
   switch (state) {
-    case NEW: return NEW_COLOR;
+    case NEW:
+      return NEW_COLOR;
     case SEED:
-    case FULL: return TREE_COLOR;
-    case EMPTY: return BG_COLOR;
-    case TRAIL: return 0x2965;
+    case FULL: // return TREE_COLOR;
+      if (i > NUM_SHADES) i = NUM_SHADES;
+      return shades[i];
+    case EMPTY:
+      return BG_COLOR;
+    case TRAIL:
+      return 0x2965;
     default:
       int val = (state > 31) ? 31 : state;
       return ((val << 11) | (1+2*val << 5) | val);
