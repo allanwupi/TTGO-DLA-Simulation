@@ -3,14 +3,13 @@
 #include <TFT_eSPI.h>
 
 #define NUM_WALK_DIRECTIONS 8 // Moore
-#define PARTICLE_NUM 5 // (not used)
 #define MAX_SPAWN_RADIUS 85
 #define COLS 320
 #define ROWS 170
 #define CENTRE_X 160
 #define CENTRE_Y 85
 #define NUM_COLOURS 10
-#define COLOUR_SWITCH 200
+#define COLOUR_SWITCH 250
 
 typedef enum {
   SEED = -3,
