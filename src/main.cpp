@@ -2,7 +2,7 @@
 #include <TFT_eSPI.h>
 #include <math.h>
 
-#define PARTICLE_NUM 5 (not used)
+#define PARTICLE_NUM 5 // (not used)
 #define MAX_SPAWN_RADIUS 85
 #define COLS 320
 #define ROWS 170
