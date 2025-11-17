@@ -65,13 +65,8 @@ void toggleColours(TFT_eSPI *tft) {
 void toggleParticles(TFT_eSPI *tft) {
   static const uint32_t INIT_LIVE_COLOUR = LIVE_COLOUR;
   SHOW_PARTICLES = !SHOW_PARTICLES;
-  if (SHOW_PARTICLES) {
-    LIVE_COLOUR = INIT_LIVE_COLOUR;
-    tft->setTextColor(TEXT_COLOUR, BG_COLOUR);
-  } else {
-    LIVE_COLOUR = BG_COLOUR;
-    tft->setTextColor(BG_COLOUR, BG_COLOUR);
-  }
+  if (SHOW_PARTICLES) LIVE_COLOUR = INIT_LIVE_COLOUR;
+  else LIVE_COLOUR = BG_COLOUR;
 }
 
 uint32_t colourMap(int state) {
