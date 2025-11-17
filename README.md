@@ -10,7 +10,7 @@ Inspirations and References
 - See the [Wikipedia article on DLA](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation) for more details.
 - There are some excellent animations on [this page about cellular automata](https://robotmoon.com/cellular-automata/#elementary-cellular-automata).
 
-![Example Brownian tree.](https://github.com/allanwupi/TTGO-DLA-Simulation/blob/main/img/IMG_0146.jpg)
+![Example Brownian tree.](https://github.com/allanwupi/TTGO-DLA-Simulation/blob/main/img/RGB.HEIC)
 
 Simulation Steps
 ---
