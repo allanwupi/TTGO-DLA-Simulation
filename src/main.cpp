@@ -2,7 +2,7 @@
 #include <TFT_eSPI.h>
 #include "simulation.h"
 
-#define SLEEP_MILLIS 75 // (not used)
+#define SLEEP_MILLIS 75
 #define DEFAULT_ROTATION 1
 #define RANDOM_SEED_PIN 1
 
@@ -28,5 +28,9 @@ void setup() {
 }
 
 void loop() {
-  simulate(world, &tft);
+  if (GLOBAL_PARTICLE_COUNT > MAX_PARTICLE_COUNT) {
+    delay(1000);
+  } else {
+    simulate(world, &tft);
+  }
 }

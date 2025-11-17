@@ -14,15 +14,15 @@ void seed(int grid[][COLS], int select) {
         float angle = o * M_PI / 180.0;
         int x = round(80 * cos(angle) + CENTRE_X);
         int y = round(80 * sin(angle) + CENTRE_Y);
-        grid[y][x] = SEED;
+        grid[y][x] = DEAD;
       }
       break;
     case 1: // Bottom line
-      for (int x = 0; x < COLS; x++) grid[ROWS-1][x] = SEED;
+      for (int x = 0; x < COLS; x++) grid[ROWS-1][x] = DEAD;
       break;
     case 0: // Centre
     default: //
-      grid[CENTRE_Y][CENTRE_X] = SEED;
+      grid[CENTRE_Y][CENTRE_X] = DEAD;
   }
 }
 
@@ -49,7 +49,7 @@ void spawn(int grid[][COLS], Walker *ptr, int radius) {
   if (outOfBounds(grid, x, y) || grid[y][x] != EMPTY || abs(x-CENTRE_X)+abs(y-CENTRE_Y) < radius) {
     spawn(grid, ptr, radius);
   } else {
-    grid[ptr->y][ptr->x] = NEW;
+    grid[ptr->y][ptr->x] = LIVE;
   }
 }
 
@@ -76,7 +76,7 @@ int stick(int grid[][COLS], Walker *ptr) {
     if (outOfBounds(grid, nx, ny)) {
       continue;
     }
-    if (grid[ny][nx] != EMPTY && grid[ny][nx] != NEW) {
+    if (grid[ny][nx] != EMPTY && grid[ny][nx] != LIVE && grid[ny][nx] != GARBAGE) {
       grid[ptr->y][ptr->x] = ptr->age;
       return 1;
     }

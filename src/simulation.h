@@ -2,6 +2,7 @@
 #define SIMULATION_H
 #include <TFT_eSPI.h>
 
+#define MAX_PARTICLE_COUNT 9999
 #define NUM_WALK_DIRECTIONS 8 // Moore
 #define MAX_SPAWN_RADIUS 85
 #define COLS 320
@@ -11,11 +12,11 @@
 #define NUM_COLOURS 10
 
 typedef enum {
-  SEED = -3,
-  NEW = -2,
-  OUT_OF_BOUNDS = -1,
+  OUT_OF_BOUNDS = -3,
+  LIVE = -2,
+  GARBAGE = -1,
   EMPTY = 0,
-  FULL = 1,
+  DEAD = 1,
   // positive values are ages which get mapped to colours
 } State;
 
@@ -31,8 +32,7 @@ int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 0, -1};*/
 // DEFINE COLOURS
 extern uint32_t TEXT_COLOUR;
 extern uint32_t BG_COLOUR;
-extern uint32_t SEED_COLOUR;
-extern uint32_t NEW_COLOUR;
+extern uint32_t LIVE_COLOUR;
 extern uint32_t HUE[NUM_COLOURS];
 extern int AGE[NUM_COLOURS];
 

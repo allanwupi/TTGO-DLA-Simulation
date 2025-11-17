@@ -24,8 +24,6 @@ Current Implementation
 Limitations and Planned Features
 ---
 
-The current simulation is _very_ slow (but this seems difficult to improve). Also, it could look prettier.
-
 1. Test out various colour palettes and ways of storing particle lifetime
 2. Add alternative seed configurations, e.g. straight line at the bottom
 3. Implement an algorithm to accurately measure tree size (min and max radius)
@@ -33,3 +31,5 @@ The current simulation is _very_ slow (but this seems difficult to improve). Als
 5. Add a 'gravity' force that attracts particles towards the centre of mass
 
 Note that drawing the trails of the particles slows down the simulation a lot and doesn't seem worthwhile.
+
+The speed of simulation is *monumentally* increased by not drawing empty cells!

@@ -3,8 +3,7 @@
 
 uint32_t TEXT_COLOUR = TFT_GREEN;
 uint32_t BG_COLOUR = TFT_BLACK;
-uint32_t SEED_COLOUR = TFT_WHITE;
-uint32_t NEW_COLOUR = TFT_GREEN;
+uint32_t LIVE_COLOUR = TFT_GREEN;
 
 uint32_t HUE[NUM_COLOURS] = {
   TFT_WHITE,
@@ -25,19 +24,18 @@ int AGE[NUM_COLOURS] = {
   300,
   500,
   800,
-  1300,
-  2100,
-  3400,
-  5500,
-  8900,
+  1200,
+  1600,
+  2000,
+  2500,
+  4000,
 };
 
 uint32_t colourMap(int state) {
   switch (state) {
-    case NEW:
-      return NEW_COLOUR;
-    case SEED:
-      return SEED_COLOUR;
+    case LIVE:
+      return LIVE_COLOUR;
+    case GARBAGE:
     case EMPTY:
       return BG_COLOUR;
     default: // particle age
@@ -52,12 +50,18 @@ void drawGrid(int grid[][COLS], TFT_eSPI *tft) {
   int cell_colour;
   for (int x = 0; x < COLS; x++) {
     for (int y = 0; y < ROWS; y++) {
-      if (grid[y][x] == OUT_OF_BOUNDS) continue;
-      if (grid[y][x] == FULL)
+      if (grid[y][x] == OUT_OF_BOUNDS || grid[y][x] == EMPTY) continue;
+      if (grid[y][x] == DEAD)
         grid[y][x] = GLOBAL_PARTICLE_COUNT;
       cell_colour = colourMap(grid[y][x]);
       tft->drawPixel(x, y, cell_colour);
-      if (grid[y][x] == NEW) grid[y][x] = EMPTY;
+      if (grid[y][x] == LIVE) {
+        grid[y][x] = GARBAGE;
+        continue;
+      } 
+      if (grid[y][x] == GARBAGE) {
+        grid[y][x] = EMPTY;
+      }
     }
   }
 }
