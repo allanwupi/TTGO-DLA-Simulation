@@ -2,7 +2,6 @@
 #include <TFT_eSPI.h>
 #include "simulation.h"
 
-#define SLEEP_MILLIS 75
 #define DEFAULT_ROTATION 1
 #define RANDOM_SEED_PIN 1
 
@@ -30,7 +29,7 @@ void setup() {
 void loop() {
   if (GLOBAL_PARTICLE_COUNT >= MAX_PARTICLE_COUNT) {
     drawGrid(world, &tft); // removes last live particle
-    delay(1000);
+    delay(9999);
   } else {
     simulate(world, &tft);
   }

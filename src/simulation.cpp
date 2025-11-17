@@ -86,7 +86,6 @@ int stick(int grid[][COLS], Walker *ptr) {
 
 void simulate(int grid[][COLS], TFT_eSPI *tft) {
   static Walker p = {.x = CENTRE_X, .y = CENTRE_Y};
-  static unsigned long prevUpdate = millis();
   static int radius = 3;
   static int growth_bar = 10;
   static bool respawn = false;
@@ -108,7 +107,6 @@ void simulate(int grid[][COLS], TFT_eSPI *tft) {
   if (draw_screen) {
     drawGrid(grid, tft);
     draw_screen = false;
-    prevUpdate = millis();
     tft->setCursor(0,0);
     tft->printf("%-5d", GLOBAL_PARTICLE_COUNT);
   }
