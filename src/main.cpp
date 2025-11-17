@@ -34,6 +34,8 @@ void loop() {
   if (RIGHT_BUTTON()) toggleParticles(&tft);
   if (GLOBAL_PARTICLE_COUNT >= MAX_PARTICLE_COUNT) {
     drawGrid(world, &tft); // removes last live particle
+    tft.setCursor(0,0);
+    tft.printf("     "); // hides particle count
     delay(100);
   } else {
     simulate(world, &tft);
