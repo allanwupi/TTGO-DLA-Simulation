@@ -34,7 +34,12 @@ extern uint32_t TEXT_COLOUR;
 extern uint32_t BG_COLOUR;
 extern uint32_t LIVE_COLOUR;
 extern uint32_t HUE[NUM_COLOURS];
-extern int AGE[NUM_COLOURS];
+extern uint32_t SHADE[NUM_COLOURS];
+extern int STAGE[NUM_COLOURS];
+
+extern uint32_t *COLOURSCHEME;
+extern bool ENABLE_COLOUR;
+extern bool SHOW_PARTICLES;
 
 extern int GLOBAL_PARTICLE_COUNT;
 extern int VECTOR_X[NUM_WALK_DIRECTIONS];
@@ -54,6 +59,8 @@ int manhattan(int grid[][COLS]);
 int euclidean(int grid[][COLS]);
 
 // VISUALISER FUNCTIONS
+void toggleColours(void);
+void toggleParticles(void);
 uint32_t colourMap(int state);
 void drawGrid(int grid[][COLS], TFT_eSPI *tft);
 void simulate(int grid[][COLS], TFT_eSPI *tft);

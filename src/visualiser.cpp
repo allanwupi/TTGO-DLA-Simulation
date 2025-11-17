@@ -5,6 +5,9 @@ uint32_t TEXT_COLOUR = TFT_GREEN;
 uint32_t BG_COLOUR = TFT_BLACK;
 uint32_t LIVE_COLOUR = TFT_DARKGREY;
 
+bool ENABLE_COLOUR = true;
+bool SHOW_PARTICLES = true;
+
 uint32_t HUE[NUM_COLOURS] = {
   TFT_WHITE,
   TFT_PINK,
@@ -18,7 +21,20 @@ uint32_t HUE[NUM_COLOURS] = {
   TFT_PURPLE,
 };
 
-int AGE[NUM_COLOURS] = {
+uint32_t SHADE[] = {
+  0xFFFF, // 31
+  0xEF7D, // 29
+  0xDEFB, // 27
+  0xC638, // 24
+  0xAD75, // 21
+  0x94B2, // 18
+  0x8430, // 16
+  0x73AE, // 14
+  0x632C, // 12
+  0x528A, // 10
+};
+
+int STAGE[NUM_COLOURS] = {
   100,
   200,
   300,
@@ -31,6 +47,21 @@ int AGE[NUM_COLOURS] = {
   4000,
 };
 
+uint32_t *COLOURSCHEME = HUE;
+
+void toggleColours(void) {
+  ENABLE_COLOUR = !ENABLE_COLOUR;
+  if (ENABLE_COLOUR) COLOURSCHEME = HUE;
+  else COLOURSCHEME = SHADE;
+}
+
+void toggleParticles(void) {
+  static uint32_t ORIGINAL_COLOUR = LIVE_COLOUR;
+  SHOW_PARTICLES = !SHOW_PARTICLES;
+  if (SHOW_PARTICLES) LIVE_COLOUR = ORIGINAL_COLOUR;
+  else LIVE_COLOUR = BG_COLOUR;
+}
+
 uint32_t colourMap(int state) {
   switch (state) {
     case LIVE:
@@ -40,8 +71,8 @@ uint32_t colourMap(int state) {
       return BG_COLOUR;
     default: // particle age
       for (int i = 0; i < NUM_COLOURS; i++)
-        if (state < AGE[i]) return HUE[i];
-      return HUE[NUM_COLOURS-1];
+        if (state < STAGE[i]) return COLOURSCHEME[i];
+      return COLOURSCHEME[NUM_COLOURS-1];
   }
 }
 

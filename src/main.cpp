@@ -8,6 +8,9 @@
 TFT_eSPI tft = TFT_eSPI();
 int world[ROWS][COLS] = {0};
 
+bool LEFT_BUTTON(void);
+bool RIGHT_BUTTON(void);
+
 void setup() {
   // Serial.begin(115200);
   tft.init();
@@ -27,10 +30,30 @@ void setup() {
 }
 
 void loop() {
+  if (LEFT_BUTTON()) toggleParticles();
+  if (RIGHT_BUTTON()) toggleColours();
   if (GLOBAL_PARTICLE_COUNT >= MAX_PARTICLE_COUNT) {
     drawGrid(world, &tft); // removes last live particle
-    delay(9999);
+    delay(100);
   } else {
     simulate(world, &tft);
   }
+}
+
+bool LEFT_BUTTON(void) {
+  static bool prevLeft = true;
+  static bool currLeft = false;
+  currLeft = !digitalRead(0);
+  bool leftButtonPressed = (!prevLeft && currLeft);
+  prevLeft = currLeft;
+  return leftButtonPressed;
+}
+
+bool RIGHT_BUTTON(void) {
+  static bool prevRight = true;
+  static bool currRight = false;
+  currRight = !digitalRead(14);
+  bool rightButtonPressed = (!prevRight && currRight);
+  prevRight = currRight;
+  return rightButtonPressed;
 }
