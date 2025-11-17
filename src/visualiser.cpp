@@ -49,17 +49,29 @@ int STAGE[NUM_COLOURS] = {
 
 uint32_t *COLOURSCHEME = HUE;
 
-void toggleColours(void) {
+void toggleColours(TFT_eSPI *tft) {
+  static const uint32_t INIT_TEXT_COLOUR = TEXT_COLOUR;
   ENABLE_COLOUR = !ENABLE_COLOUR;
-  if (ENABLE_COLOUR) COLOURSCHEME = HUE;
-  else COLOURSCHEME = SHADE;
+  if (ENABLE_COLOUR) {
+    TEXT_COLOUR = INIT_TEXT_COLOUR;
+    COLOURSCHEME = HUE;
+  } else {
+    TEXT_COLOUR = TFT_WHITE;
+    COLOURSCHEME = SHADE;
+  }
+  tft->setTextColor(TEXT_COLOUR, BG_COLOUR);
 }
 
-void toggleParticles(void) {
-  static uint32_t ORIGINAL_COLOUR = LIVE_COLOUR;
+void toggleParticles(TFT_eSPI *tft) {
+  static const uint32_t INIT_LIVE_COLOUR = LIVE_COLOUR;
   SHOW_PARTICLES = !SHOW_PARTICLES;
-  if (SHOW_PARTICLES) LIVE_COLOUR = ORIGINAL_COLOUR;
-  else LIVE_COLOUR = BG_COLOUR;
+  if (SHOW_PARTICLES) {
+    LIVE_COLOUR = INIT_LIVE_COLOUR;
+    tft->setTextColor(TEXT_COLOUR, BG_COLOUR);
+  } else {
+    LIVE_COLOUR = BG_COLOUR;
+    tft->setTextColor(BG_COLOUR, BG_COLOUR);
+  }
 }
 
 uint32_t colourMap(int state) {

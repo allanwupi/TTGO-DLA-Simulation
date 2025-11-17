@@ -59,8 +59,8 @@ int manhattan(int grid[][COLS]);
 int euclidean(int grid[][COLS]);
 
 // VISUALISER FUNCTIONS
-void toggleColours(void);
-void toggleParticles(void);
+void toggleColours(TFT_eSPI *tft);
+void toggleParticles(TFT_eSPI *tft);
 uint32_t colourMap(int state);
 void drawGrid(int grid[][COLS], TFT_eSPI *tft);
 void simulate(int grid[][COLS], TFT_eSPI *tft);

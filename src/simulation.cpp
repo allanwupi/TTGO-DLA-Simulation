@@ -107,10 +107,8 @@ void simulate(int grid[][COLS], TFT_eSPI *tft) {
   if (draw_screen) {
     drawGrid(grid, tft);
     draw_screen = false;
-    if (SHOW_PARTICLES) {
-      tft->setCursor(0,0);
-      tft->printf("%-5d", GLOBAL_PARTICLE_COUNT);
-    }
+    tft->setCursor(0,0);
+    tft->printf("%-5d", GLOBAL_PARTICLE_COUNT);
   }
 }
 

@@ -30,8 +30,8 @@ void setup() {
 }
 
 void loop() {
-  if (LEFT_BUTTON()) toggleParticles();
-  if (RIGHT_BUTTON()) toggleColours();
+  if (LEFT_BUTTON()) toggleColours(&tft);
+  if (RIGHT_BUTTON()) toggleParticles(&tft);
   if (GLOBAL_PARTICLE_COUNT >= MAX_PARTICLE_COUNT) {
     drawGrid(world, &tft); // removes last live particle
     delay(100);
