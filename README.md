@@ -32,11 +32,11 @@ User Interface
 Planned Features
 ---
 
-- Add alternative seed configurations, e.g. straight line at the bottom
-- Investigate algorithms to accurately measure tree size (min and max radius)
+I'm currently pretty happy with the results, but there are some extra features I could add:
+
+- Switch between alternative seed configurations, e.g. straight line at the bottom
+- Implement a gravitational force as an alternative to random Brownian motion
+- Investigate more efficient algorithms for drawing rasterised circles (without trigonometry)
 - Investigate options for different spawn positions, as a function of tree size
-- Add a 'gravity' force that attracts particles towards the centre of mass
 
-Note that drawing the trails of the particles slows down the simulation a lot and doesn't seem worthwhile.
-
-The speed of simulation is *monumentally* increased by not drawing empty cells!
+Note: drawing the trails of the particles slows down the simulation a lot and doesn't seem worthwhile.
