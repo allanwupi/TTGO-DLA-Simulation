@@ -87,7 +87,8 @@ int stick(int grid[][COLS], Walker *ptr) {
 void simulate(int grid[][COLS], TFT_eSPI *tft) {
   static Walker p = {.x = CENTRE_X, .y = CENTRE_Y};
   static int radius = 3;
-  static int growth_bar = 10;
+  static int margin = 0;
+  static int growth_bar = 20;
   static bool respawn = false;
   static bool draw_screen = false;
   if (walk(grid, &p) == 1) {
@@ -96,7 +97,7 @@ void simulate(int grid[][COLS], TFT_eSPI *tft) {
   if (stick(grid, &p) == 1) {
     GLOBAL_PARTICLE_COUNT++;
     if (radius < MAX_SPAWN_RADIUS && GLOBAL_PARTICLE_COUNT % growth_bar == 0)
-      radius = euclidean(grid)+5;
+      radius = euclidean(grid) + margin;
     respawn = true;
     draw_screen = true;
   }
