@@ -46,7 +46,7 @@ void spawn(int grid[][COLS], Walker *ptr, int radius) {
   ptr->x = x;
   ptr->y = y;
   ptr->age = GLOBAL_PARTICLE_COUNT;
-  if (outOfBounds(grid, x, y) || grid[y][x] != EMPTY || abs(x-CENTRE_X)+abs(y-CENTRE_Y) < radius) {
+  if (outOfBounds(grid, x, y) || grid[y][x] != EMPTY || abs(x-CENTRE_X)+abs(y-CENTRE_Y) < radius-5) {
     spawn(grid, ptr, radius);
   } else {
     grid[ptr->y][ptr->x] = LIVE;

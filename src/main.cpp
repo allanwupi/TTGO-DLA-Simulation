@@ -28,7 +28,8 @@ void setup() {
 }
 
 void loop() {
-  if (GLOBAL_PARTICLE_COUNT > MAX_PARTICLE_COUNT) {
+  if (GLOBAL_PARTICLE_COUNT >= MAX_PARTICLE_COUNT) {
+    drawGrid(world, &tft); // removes last live particle
     delay(1000);
   } else {
     simulate(world, &tft);
