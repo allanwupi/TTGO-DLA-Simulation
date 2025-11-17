@@ -1,14 +1,14 @@
 #include <TFT_eSPI.h>
 #include "simulation.h"
+#include "math.h"
 
 int GLOBAL_PARTICLE_COUNT = 1;
 
 int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 1, 0, -1, -1, -1, 0, 1};
 int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 1, 1, 0, -1, -1, -1};
 
-void seed(int grid[][COLS]) {
-  const int select_seed = 1;
-  switch (select_seed) {
+void seed(int grid[][COLS], int select) {
+  switch (select) {
     case 2: // Circle
       for (int o = 0; o < 360; o += 2) {
         float angle = o * M_PI / 180.0;
@@ -43,7 +43,7 @@ void spawn(int grid[][COLS], Walker *ptr, int radius) {
   }
   ptr->x = x;
   ptr->y = y;
-  // ptr->s = NEW;
+  ptr->age = GLOBAL_PARTICLE_COUNT;
   // Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
   if (outOfBounds(x, y) || grid[y][x] != EMPTY || abs(x-CENTRE_X)+abs(y-CENTRE_Y) < radius) {
     // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
@@ -77,9 +77,67 @@ int stick(int grid[][COLS], Walker *ptr) {
       continue;
     }
     if (grid[ny][nx] != EMPTY && grid[ny][nx] != NEW && grid[ny][nx] != OUT_OF_BOUNDS) {
-      grid[ptr->y][ptr->x] = FULL;
+      grid[ptr->y][ptr->x] = ptr->age;
       return 1;
     }
   }
   return 0;
+}
+
+void simulate(int grid[][COLS], TFT_eSPI *tft) {
+  static Walker p = {.x = CENTRE_X, .y = CENTRE_Y};
+  static unsigned long prevUpdate = millis();
+  static int radius = 3;
+  static int growth_bar = 10;
+  static bool respawn = false;
+  static bool draw_screen = false;
+  if (walk(grid, &p) == 1) {
+    respawn = true;
+  }
+  if (stick(grid, &p) == 1) {
+    GLOBAL_PARTICLE_COUNT++;
+    if (radius < MAX_SPAWN_RADIUS && GLOBAL_PARTICLE_COUNT % growth_bar == 0)
+      radius = euclidean(grid)+5;
+    respawn = true;
+    draw_screen = true;
+  }
+  if (respawn) {
+    spawn(grid, &p, radius);
+    respawn = false;
+  }
+  if (draw_screen) {
+    drawGrid(grid, tft);
+    draw_screen = false;
+    prevUpdate = millis();
+    tft->setCursor(0,0);
+    tft->printf("%-5d", GLOBAL_PARTICLE_COUNT);
+  }
+}
+
+int manhattan(int grid[][COLS]) {
+  int max_dist = 0;
+  int curr_dist;
+  for (int x = 0; x < COLS; x++) {
+    for (int y = 0; y < ROWS; y++) {
+      if (grid[y][x] > 0) {
+        curr_dist = abs(x-CENTRE_X) + abs(y-CENTRE_Y);
+        if (curr_dist > max_dist) max_dist = curr_dist;
+      }
+    }
+  }
+  return max_dist;
+}
+
+int euclidean(int grid[][COLS]) {
+  int max_dist = 0;
+  int curr_dist;
+  for (int x = 0; x < COLS; x++) {
+    for (int y = 0; y < ROWS; y++) {
+      if (grid[y][x] > 0) {
+        curr_dist = (x-CENTRE_X)*(x-CENTRE_X) + (y-CENTRE_Y)*(y-CENTRE_Y);
+        if (curr_dist > max_dist) max_dist = curr_dist;
+      }
+    }
+  }
+  return round(sqrt(max_dist));
 }

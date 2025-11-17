@@ -9,7 +9,6 @@
 #define CENTRE_X 160
 #define CENTRE_Y 85
 #define NUM_COLOURS 10
-#define COLOUR_SWITCH 250
 
 typedef enum {
   SEED = -3,
@@ -17,13 +16,13 @@ typedef enum {
   OUT_OF_BOUNDS = -1,
   EMPTY = 0,
   FULL = 1,
-  // values above 1 map to HUE colours
+  // positive values are ages which get mapped to colours
 } State;
 
 typedef struct {
   int x;
   int y;
-  // State s;
+  int age;
 } Walker;
 
 /*int VECTOR_X[NUM_WALK_DIRECTIONS] = {1, 0, -1, 0};
@@ -43,14 +42,19 @@ extern int VECTOR_Y[NUM_WALK_DIRECTIONS];
 extern TFT_eSPI tft;
 
 // LOGIC FUNCTIONS
-void seed(int grid[][COLS]);
+void seed(int grid[][COLS], int select);
 void spawn(int grid[][COLS], Walker *ptr, int radius);
 bool outOfBounds(int x, int y);
 int walk(int grid[][COLS], Walker *ptr);
 int stick(int grid[][COLS], Walker *ptr);
 
+// DISTANCE MEASURES
+int manhattan(int grid[][COLS]);
+int euclidean(int grid[][COLS]);
+
 // VISUALISER FUNCTIONS
 uint32_t colourMap(int state);
-void drawGrid(int grid[][COLS]);
+void drawGrid(int grid[][COLS], TFT_eSPI *tft);
+void simulate(int grid[][COLS], TFT_eSPI *tft);
 
 #endif

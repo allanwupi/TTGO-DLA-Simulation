@@ -6,8 +6,6 @@ uint32_t BG_COLOUR = TFT_BLACK;
 uint32_t SEED_COLOUR = TFT_WHITE;
 uint32_t NEW_COLOUR = TFT_GREEN;
 
-extern TFT_eSPI tft;
-
 uint32_t HUE[NUM_COLOURS] = {
   TFT_WHITE,
   TFT_PINK,
@@ -21,6 +19,19 @@ uint32_t HUE[NUM_COLOURS] = {
   TFT_PURPLE,
 };
 
+int AGE[NUM_COLOURS] = {
+  100,
+  200,
+  300,
+  500,
+  800,
+  1300,
+  2100,
+  3400,
+  5500,
+  8900,
+};
+
 uint32_t colourMap(int state) {
   switch (state) {
     case NEW:
@@ -29,14 +40,14 @@ uint32_t colourMap(int state) {
       return SEED_COLOUR;
     case EMPTY:
       return BG_COLOUR;
-    default:
-      int i = state / COLOUR_SWITCH;
-      if (i >= NUM_COLOURS) i = NUM_COLOURS-1;
-      return HUE[i];
+    default: // particle age
+      for (int i = 0; i < NUM_COLOURS; i++)
+        if (state < AGE[i]) return HUE[i];
+      return HUE[NUM_COLOURS-1];
   }
 }
 
-void drawGrid(int grid[][COLS]) {
+void drawGrid(int grid[][COLS], TFT_eSPI *tft) {
   if (grid == NULL) return;
   int cell_colour;
   for (int x = 0; x < COLS; x++) {
@@ -45,7 +56,7 @@ void drawGrid(int grid[][COLS]) {
       if (grid[y][x] == FULL)
         grid[y][x] = GLOBAL_PARTICLE_COUNT;
       cell_colour = colourMap(grid[y][x]);
-      tft.drawPixel(x, y, cell_colour);
+      tft->drawPixel(x, y, cell_colour);
       if (grid[y][x] == NEW) grid[y][x] = EMPTY;
     }
   }
