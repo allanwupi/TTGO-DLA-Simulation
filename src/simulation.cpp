@@ -26,8 +26,10 @@ void seed(int grid[][COLS], int select) {
   }
 }
 
-bool outOfBounds(int x, int y) {
-  return (x < 0 || x >= COLS || y < 0 || y >= ROWS);
+bool outOfBounds(int grid[][COLS], int x, int y) {
+  if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return true;
+  if (grid[y][x] == OUT_OF_BOUNDS) return true;
+  else return false;
 }
 
 void spawn(int grid[][COLS], Walker *ptr, int radius) {
@@ -44,9 +46,7 @@ void spawn(int grid[][COLS], Walker *ptr, int radius) {
   ptr->x = x;
   ptr->y = y;
   ptr->age = GLOBAL_PARTICLE_COUNT;
-  // Serial.printf("r=%d,(%d,%d)\n",radius,x,y);
-  if (outOfBounds(x, y) || grid[y][x] != EMPTY || abs(x-CENTRE_X)+abs(y-CENTRE_Y) < radius) {
-    // Serial.printf("failed! trying to respawn\n",ptr->x,ptr->y);
+  if (outOfBounds(grid, x, y) || grid[y][x] != EMPTY || abs(x-CENTRE_X)+abs(y-CENTRE_Y) < radius) {
     spawn(grid, ptr, radius);
   } else {
     grid[ptr->y][ptr->x] = NEW;
@@ -59,7 +59,7 @@ int walk(int grid[][COLS], Walker *ptr) {
   int direction = random(0, NUM_WALK_DIRECTIONS);
   ptr->x += VECTOR_X[direction];
   ptr->y += VECTOR_Y[direction];
-  if (outOfBounds(ptr->x, ptr->y)) {
+  if (outOfBounds(grid, ptr->x, ptr->y)) {
     return 1;
   } else {
     return 0;
@@ -73,10 +73,10 @@ int stick(int grid[][COLS], Walker *ptr) {
   for (int i = 0; i < NUM_WALK_DIRECTIONS; i++) {
     nx = ptr->x + VECTOR_X[i];
     ny = ptr->y + VECTOR_Y[i];
-    if (outOfBounds(nx, ny)) {
+    if (outOfBounds(grid, nx, ny)) {
       continue;
     }
-    if (grid[ny][nx] != EMPTY && grid[ny][nx] != NEW && grid[ny][nx] != OUT_OF_BOUNDS) {
+    if (grid[ny][nx] != EMPTY && grid[ny][nx] != NEW) {
       grid[ptr->y][ptr->x] = ptr->age;
       return 1;
     }

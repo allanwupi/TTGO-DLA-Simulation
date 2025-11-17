@@ -34,6 +34,7 @@ extern uint32_t BG_COLOUR;
 extern uint32_t SEED_COLOUR;
 extern uint32_t NEW_COLOUR;
 extern uint32_t HUE[NUM_COLOURS];
+extern int AGE[NUM_COLOURS];
 
 extern int GLOBAL_PARTICLE_COUNT;
 extern int VECTOR_X[NUM_WALK_DIRECTIONS];
@@ -44,7 +45,7 @@ extern TFT_eSPI tft;
 // LOGIC FUNCTIONS
 void seed(int grid[][COLS], int select);
 void spawn(int grid[][COLS], Walker *ptr, int radius);
-bool outOfBounds(int x, int y);
+bool outOfBounds(int grid[][COLS], int x, int y);
 int walk(int grid[][COLS], Walker *ptr);
 int stick(int grid[][COLS], Walker *ptr);
 
