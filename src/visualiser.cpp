@@ -101,8 +101,6 @@ void drawGrid(int grid[][COLS], TFT_eSPI *tft) {
   for (int x = 0; x < COLS; x++) {
     for (int y = 0; y < ROWS; y++) {
       if (grid[y][x] == OUT_OF_BOUNDS || grid[y][x] == EMPTY) continue;
-      if (grid[y][x] == DEAD)
-        grid[y][x] = GLOBAL_PARTICLE_COUNT;
       cell_colour = colourMap(grid[y][x]);
       tft->drawPixel(x, y, cell_colour);
       if (grid[y][x] == LIVE) {
