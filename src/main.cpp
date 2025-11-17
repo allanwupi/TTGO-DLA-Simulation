@@ -15,8 +15,8 @@ void setup() {
   // Serial.begin(115200);
   tft.init();
   tft.setRotation(DEFAULT_ROTATION);
-  tft.fillScreen(BG_COLOUR);
-  tft.setTextColor(TEXT_COLOUR, BG_COLOUR);
+  tft.fillScreen(BACKGROUND_COLOUR);
+  tft.setTextColor(TEXT_COLOUR, BACKGROUND_COLOUR);
   tft.setTextFont(0);
   tft.setTextSize(1);
   randomSeed(analogRead(RANDOM_SEED_PIN));

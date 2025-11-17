@@ -1,9 +1,15 @@
 #include <TFT_eSPI.h>
 #include "simulation.h"
 
-uint32_t TEXT_COLOUR = TFT_GREEN;
-uint32_t BG_COLOUR = TFT_BLACK;
-uint32_t LIVE_COLOUR = TFT_DARKGREY;
+// Treat these colours as constants
+uint32_t RGB_TEXT_COLOUR = TFT_GREEN;
+uint32_t BW_TEXT_COLOUR = TFT_SILVER;
+uint32_t RGB_LIVE_COLOUR = TFT_GREEN;
+uint32_t BW_LIVE_COLOUR = TFT_DARKGREY;
+uint32_t BACKGROUND_COLOUR = TFT_BLACK;
+
+uint32_t TEXT_COLOUR = RGB_TEXT_COLOUR;
+uint32_t LIVE_COLOUR = RGB_LIVE_COLOUR;
 
 bool ENABLE_COLOUR = true;
 bool SHOW_PARTICLES = true;
@@ -50,23 +56,29 @@ int STAGE[NUM_COLOURS] = {
 uint32_t *COLOURSCHEME = HUE;
 
 void toggleColours(TFT_eSPI *tft) {
-  static const uint32_t INIT_TEXT_COLOUR = TEXT_COLOUR;
   ENABLE_COLOUR = !ENABLE_COLOUR;
   if (ENABLE_COLOUR) {
-    TEXT_COLOUR = INIT_TEXT_COLOUR;
+    TEXT_COLOUR = RGB_TEXT_COLOUR;
+    LIVE_COLOUR = RGB_LIVE_COLOUR;
     COLOURSCHEME = HUE;
   } else {
-    TEXT_COLOUR = TFT_WHITE;
+    TEXT_COLOUR = BW_TEXT_COLOUR;
+    LIVE_COLOUR = BW_LIVE_COLOUR;
     COLOURSCHEME = SHADE;
   }
-  tft->setTextColor(TEXT_COLOUR, BG_COLOUR);
+  tft->setTextColor(TEXT_COLOUR, BACKGROUND_COLOUR);
 }
 
 void toggleParticles(TFT_eSPI *tft) {
-  static const uint32_t INIT_LIVE_COLOUR = LIVE_COLOUR;
+  static uint32_t TEMP = LIVE_COLOUR;
   SHOW_PARTICLES = !SHOW_PARTICLES;
-  if (SHOW_PARTICLES) LIVE_COLOUR = INIT_LIVE_COLOUR;
-  else LIVE_COLOUR = BG_COLOUR;
+  if (SHOW_PARTICLES) {
+    LIVE_COLOUR = TEMP;
+    TEMP = BACKGROUND_COLOUR;
+  } else {
+    TEMP = LIVE_COLOUR;
+    LIVE_COLOUR = BACKGROUND_COLOUR;
+  }
 }
 
 uint32_t colourMap(int state) {
@@ -75,7 +87,7 @@ uint32_t colourMap(int state) {
       return LIVE_COLOUR;
     case GARBAGE:
     case EMPTY:
-      return BG_COLOUR;
+      return BACKGROUND_COLOUR;
     default: // particle age
       for (int i = 0; i < NUM_COLOURS; i++)
         if (state < STAGE[i]) return COLOURSCHEME[i];

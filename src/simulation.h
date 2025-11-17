@@ -31,8 +31,8 @@ int VECTOR_Y[NUM_WALK_DIRECTIONS] = {0, 1, 0, -1};*/
 
 // DEFINE COLOURS
 extern uint32_t TEXT_COLOUR;
-extern uint32_t BG_COLOUR;
 extern uint32_t LIVE_COLOUR;
+extern uint32_t BACKGROUND_COLOUR;
 extern uint32_t HUE[NUM_COLOURS];
 extern uint32_t SHADE[NUM_COLOURS];
 extern int STAGE[NUM_COLOURS];
