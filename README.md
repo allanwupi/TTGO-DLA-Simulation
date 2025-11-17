@@ -12,7 +12,7 @@ Inspirations and References
 
 ![Example Brownian tree.](https://github.com/allanwupi/TTGO-DLA-Simulation/blob/main/img/IMG_0146.jpg)
 
-Current Implementation
+Simulation Overview
 ---
 
 1. Place seed at the centre of the screen
@@ -25,16 +25,16 @@ Current Implementation
 User Interface
 ---
 
-1. Left Button: Switch between greyscale and rainbow RGB565 colour schemes
-2. Right Button: If simulation is running, toggles drawing particle spawns and particle count
+- Left button: Switch between greyscale and rainbow RGB565 colour schemes
+- Right button: If simulation is running, toggles drawing particle spawns and particle count
 
-Limitations and Planned Features
+Planned Features
 ---
 
-1. Add alternative seed configurations, e.g. straight line at the bottom
-2. Investigate algorithms to accurately measure tree size (min and max radius)
-3. Investigate options for different spawn positions, as a function of tree size
-4. Add a 'gravity' force that attracts particles towards the centre of mass
+- Add alternative seed configurations, e.g. straight line at the bottom
+- Investigate algorithms to accurately measure tree size (min and max radius)
+- Investigate options for different spawn positions, as a function of tree size
+- Add a 'gravity' force that attracts particles towards the centre of mass
 
 Note that drawing the trails of the particles slows down the simulation a lot and doesn't seem worthwhile.
 
